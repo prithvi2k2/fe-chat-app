@@ -38,7 +38,7 @@ export default function Login() {
           const config = {
             maxAge: 60 * 60 * 24 * 7, // 1 week
             path: "/",
-            httpOnly: true,
+            httpOnly: false,
             secure: process.env.NODE_ENV === "production",
           };
           setCookie('jwt', data.jwt, config);

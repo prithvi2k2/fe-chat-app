@@ -10,21 +10,19 @@ export async function middleware(req) {
 	const next = () => NextResponse.next(); // Continue and forward req to server, if everything's fine
 	
 	const jwt = req.cookies.get('jwt');
-	console.log(jwt);
 
 	if(pathIs('/chat')){
-		if(!jwt){
+		if(!!!jwt){
             setPath('/');
 			return redirect();
         }
     }
-
-	// if(pathIs('/')){
-	// 	if(jwt){
-	// 		setPath(`/chat`)
-	// 		return redirect()
-	// 	}
-    // }
+	else if(pathIs('/')){
+		if(!!jwt){
+            setPath('/chat');
+			return redirect();
+        }
+    }
 }
 
 // Middleware is executed only when matching paths are requested
