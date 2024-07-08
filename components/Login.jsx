@@ -61,7 +61,7 @@ export default function Login() {
             value={email}
             required
             placeholder="Email"
-            className="p-2 rounded-xl text-black"
+            className="p-2 rounded-xl text-black outline outline-1"
             onChange={(e) => setEmail(e.target.value)}
           />
         </div>
@@ -72,7 +72,7 @@ export default function Login() {
             value={password}
             required
             placeholder="Password"
-            className="p-2 rounded-xl text-black"
+            className="p-2 rounded-xl text-black outline outline-1"
             onChange={(e) => setPassword(e.target.value)}
           />
         </div>

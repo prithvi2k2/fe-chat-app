@@ -62,7 +62,7 @@ export default function Register() {
             value={email}
             required
             placeholder="Email"
-            className="p-2 rounded-xl text-black"
+            className="p-2 rounded-xl text-black outline outline-1"
             onChange={(e) => setEmail(e.target.value)}
           />
         </div>
@@ -73,7 +73,7 @@ export default function Register() {
             value={username}
             required
             placeholder="Username"
-            className="p-2 rounded-xl text-black"
+            className="p-2 rounded-xl text-black outline outline-1"
             onChange={(e) => setUsername(e.target.value)}
           />
         </div>
@@ -84,7 +84,7 @@ export default function Register() {
             value={password}
             required
             placeholder="Password"
-            className="p-2 rounded-xl text-black"
+            className="p-2 rounded-xl text-black outline outline-1"
             onChange={(e) => setPassword(e.target.value)}
           />
         </div>
