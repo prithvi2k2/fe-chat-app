@@ -3,13 +3,64 @@ import { deleteCookie, getCookie } from "cookies-next";
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import { jwtDecode } from "jwt-decode";
+import { socket } from "../socket";
 
 export default function Chat() {
   const router = useRouter();
   const [sessions, setSessions] = useState([]); // Chat Sessions
   const [chatLog, setChatLog] = useState([]); // Chat Log
   const [activeSession, setActiveSession] = useState(0); // Highlight Session
-  const [toggleSessions, setToggleSessions] = useState(false); // Show/Hide Session 
+  const [toggleSessions, setToggleSessions] = useState(false); // Show/Hide Session
+  const [isConnected, setIsConnected] = useState(false);
+  const [transport, setTransport] = useState("N/A");
+
+  useEffect(() => {
+    if (socket.connected) {
+      onConnect();
+    }
+
+    function onConnect() {
+      setIsConnected(true);
+      setTransport(socket.io.engine.transport.name);
+
+      socket.io.engine.on("upgrade", (transport) => {
+        setTransport(transport.name);
+      });
+    }
+
+    function onDisconnect() {
+      setIsConnected(false);
+      setTransport("N/A");
+    }
+
+    socket.on("connect", onConnect);
+    socket.on("disconnect", onDisconnect);
+
+    return () => {
+      socket.off("connect", onConnect);
+      socket.off("disconnect", onDisconnect);
+    };
+  }, []);
+
+  useEffect(() => {
+    function updateChatLog(sessionId, chatLog) {
+      const updatedSessions = sessions.map((session) => {
+        if (session.id == sessionId) {
+          return { ...session, chat_log: chatLog };
+        }
+        return session;
+      });
+      setSessions(updatedSessions);
+      console.log(updatedSessions);
+      setChatLog(chatLog);
+    }
+
+    socket.on("message", updateChatLog);
+
+    return () => {
+      socket.off("message", updateChatLog);
+    };
+  }, [sessions]);
 
   const toggle = () => setToggleSessions(!toggleSessions);
 
@@ -28,7 +79,6 @@ export default function Chat() {
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log(data);
         getChatSessions();
       })
       .catch((err) => console.log(err));
@@ -70,15 +120,25 @@ export default function Chat() {
 
   return (
     <div className="flex flex-col w-screen h-screen max-h-screen">
-      <nav className="h-8 flex flex-shrink-0 justify-between basis-16 bg-gray-300">
+      <nav className="h-8 flex flex-shrink-0 justify-between basis-16 bg-gray-200">
         <button
           className="font-mono rounded-full outline-2 m-2 p-2 active:scale-90 bg-blue-500"
           onClick={toggle}
         >
-          {toggleSessions ? ">>Show" : "<<Hide"} Sessions
+          {toggleSessions ? ">>" : "<<"} Sessions
         </button>
+        {isConnected ? (
+          <button
+            className="m-2 p-2 rounded-full bg-green-500 font-mono cursor-default"
+          >
+            online
+          </button>
+        ) : (
+          <button className="m-2 p-2 rounded-full bg-red-500 font-mono">
+            offline
+          </button>
+        )}
         <div>
-          {/* Username */}
           <button
             className="font-mono rounded-full outline-2 m-2 p-2 active:scale-90 bg-orange-400"
             onClick={handleLogout}
@@ -87,7 +147,7 @@ export default function Chat() {
           </button>
         </div>
       </nav>
-      <div className="flex basis-full flex-col sm:flex-row">
+      <div className="flex basis-full flex-col sm:flex-row h-full overflow-auto">
         {/* Chat Session History */}
         <div
           className={
@@ -95,17 +155,7 @@ export default function Chat() {
             (toggleSessions ? "hidden" : "")
           }
         >
-          <ul className="flex flex-col h-auto">
-            <li
-              key={0}
-              id={0}
-              className={
-                "sticky top-0 p-3 underline outline outline-1  text-center content-center cursor-pointer bg-slate-800 text-white text-xl outline-white active:bg-black"
-              }
-              onClick={createChatSession}
-            >
-              New Session?
-            </li>
+          <ul className="flex flex-col-reverse h-auto overflow-y-scroll">
             {sessions.map((session) => (
               <li
                 key={session.id}
@@ -121,9 +171,17 @@ export default function Chat() {
               </li>
             ))}
           </ul>
+          <span
+            className={
+              "sticky bottom-0 p-3 underline outline outline-1  text-center content-center cursor-pointer bg-slate-800 text-white text-xl outline-white active:bg-black"
+            }
+            onClick={createChatSession}
+          >
+            New Session?
+          </span>
         </div>
         {/* Chatbox */}
-        <div className="basis-full outline outline-1 outline-gray-500 max-h-100% flex-grow-0">
+        <div className="basis-full outline outline-1 outline-gray-500 max-h-full">
           <Chatbox chatLog={chatLog} sessionId={activeSession} />
         </div>
       </div>

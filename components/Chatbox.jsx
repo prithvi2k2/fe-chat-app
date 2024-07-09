@@ -1,57 +1,41 @@
-import { useEffect, useState } from "react";
-import { getCookie } from "cookies-next";
+import { useRef, useEffect, useState } from "react";
+import { socket } from "../socket";
 
 export default function Chatbox({ chatLog, sessionId }) {
   const [chatInput, setChatInput] = useState("");
-  const [chatLogg, setChatLogg] = useState([]);
+  const scrollRef = useRef(null);
 
   useEffect(() => {
-    setChatLogg(chatLog);
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
   }, [chatLog]);
 
   const submitChat = () => {
-    if(chatInput.trim()=='') return;
-    const newChatLogg = [...chatLogg, chatInput];
-    setChatLogg(newChatLogg);
+    if (chatInput.trim() == "") return;
+    socket.emit("message", sessionId, chatInput, chatLog);
     setChatInput("");
-    if (sessionId != 0)
-      fetch(
-    `${process.env.NEXT_PUBLIC_SERVER_URL}/api/chat-sessions/${sessionId}`,
-    {
-          method: "PUT",
-          body: JSON.stringify({
-            data: { chat_log: newChatLogg },
-          }),
-          headers: {
-            "Content-type": "application/json; charset=UTF-8",
-            Authorization: "Bearer " + getCookie("jwt"),
-          },
-        }
-      )
-      .then((response) => response.json())
-      .then((data) => {
-          // console.log(data);
-        })
-        .catch((err) => console.log(err));
   };
 
   return (
-    <div className="flex flex-col bg-slate-300 h-full m-auto">
+    <div className="flex flex-col bg-slate-300 h-full">
       {/* CHAT LOG DISPLAY */}
-      <div className="basis-11/12 flex flex-col ">
-        {chatLogg.map((chatItem, id) => (
-          <div key={id} className="flex flex-col-reverse">
+      <div ref={scrollRef} className="basis-11/12 flex flex-col overflow-y-auto">
+        {sessionId == 0 ? <span className="text-center">select a SESSION to start</span> : null}
+        {/* After receiving msg acknowledgement from server, log is updated */}
+        {chatLog.map((chatItem, id) => (
+          <span key={id} className="flex flex-col-reverse">
             <span className="bg-gray-500 text-white m-2 p-2 rounded-full max-w-max">
               {chatItem}
             </span>
             <span className="bg-cyan-400 m-2 p-2 rounded-full max-w-max ml-auto">
               {chatItem}
             </span>
-          </div>
+          </span>
         ))}
       </div>
       {/* CHAT TEXT INPUT */}
-      <div className="basis-1/12 flex sticky bottom-0">
+      <div className="basis-1/12 flex sticky bottom-0 bg-slate-300">
         <input
           type="text"
           className="basis-5/6 rounded-full outline outline-2 outline-cyan-300 m-1 p-5 text-lg text-ellipsis"
