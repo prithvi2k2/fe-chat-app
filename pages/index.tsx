@@ -5,7 +5,7 @@ const inter = Inter({ subsets: ["latin"] });
 export default function Home() {
   return (
     <div
-      className={`flex min-h-screen flex-col items-center justify-between p-12`}
+      className={`flex min-h-screen flex-col items-center justify-around`}
     >
       <main className="text-2xl mt-16">_/ Server Chat \_</main>
       <Auth />

@@ -33,7 +33,7 @@ export default function Auth() {
           </div>
         ))}
       </div>
-      <div className="h-40 content-center text-center">{register ? <Register /> : <Login />}</div>
+      {register ? <Register /> : <Login />}
     </div>
   );
 }

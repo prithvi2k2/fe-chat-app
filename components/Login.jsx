@@ -52,36 +52,32 @@ export default function Login() {
   };
 
   return (
-    <>
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-        <div>
+    <div>
+      <form onSubmit={handleSubmit} className="flex flex-col p-2 gap-4">
           <input
             type="email"
             id="email"
             value={email}
             required
             placeholder="Email"
-            className="p-2 rounded-xl text-black outline outline-1"
+            className="p-2 rounded-full outline outline-1"
             onChange={(e) => setEmail(e.target.value)}
           />
-        </div>
-        <div>
           <input
             type="password"
             id="password"
             value={password}
             required
             placeholder="Password"
-            className="p-2 rounded-xl text-black outline outline-1"
+            className="p-2 rounded-full outline outline-1"
             onChange={(e) => setPassword(e.target.value)}
           />
-        </div>
         <input
           type="submit"
-          className="text-white border-green-400 rounded-xl bg-green-500 p-3 "
+          className="text-white rounded-full bg-green-500 p-3"
         />
       </form>
-      {statusMsg != null ? <span>{statusMsg}</span> : null}
-    </>
+      {statusMsg != null ? <span className="flex justify-center">{statusMsg}</span> : null}
+    </div>
   );
 }
