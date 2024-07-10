@@ -23,6 +23,8 @@ export default function Chatbox({ chatLog, sessionId }) {
       {/* CHAT LOG DISPLAY */}
       <div ref={scrollRef} className="basis-full flex flex-col overflow-y-auto flex-grow-1">
         {sessionId == 0 ? <span className="text-center">select a SESSION to chat</span> : null}
+        {chatLog.length == 0 && sessionId>0 ? <span className="text-center">so Empty... Start chatting</span> : null}
+
         {/* After receiving msg acknowledgement from server, log is updated */}
         {chatLog.map((chatItem, id) => (
           <span key={id} className="flex flex-col-reverse">

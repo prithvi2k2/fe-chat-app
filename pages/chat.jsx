@@ -120,30 +120,35 @@ export default function Chat() {
 
   return (
     <div className="flex flex-col w-screen h-dvh max-h-dvh">
-      <nav className="h-8 flex flex-shrink-0 justify-between basis-16 bg-gray-200">
+      <nav className="p-1 flex flex-shrink-0 justify-between basis-16 bg-gray-200">
         <button
-          className="font-mono rounded-full outline-2 m-2 p-2 active:scale-90 bg-blue-500"
+          className={"font-mono rounded-full outline-2 m-2 p-2 active:scale-90 bg-blue-500 " +
+            (toggleSessions ? "" : "underline")}
           onClick={toggle}
         >
           {toggleSessions ? ">>" : "<<"} Sessions
         </button>
         {isConnected ? (
-          <button title="Live WebSocket Connection"
-            className="m-2 p-2 rounded-full bg-green-500 font-mono cursor-default"
+          <button
+            title="Live WebSocket Connection"
+            className="font-mono rounded-full outline-2 m-2 p-2 bg-green-500 cursor-default"
           >
             online
           </button>
         ) : (
-          <button title="No WebSocket Connection" className="m-2 p-2 rounded-full bg-red-500 font-mono">
+          <button
+            title="No WebSocket Connection"
+            className="m-2 p-2 rounded-full bg-red-500 font-mono"
+          >
             offline
           </button>
         )}
         <div>
           <button
-            className="font-mono rounded-full outline-2 m-2 p-2 active:scale-90 bg-orange-400"
+            className="font-mono rounded-full m-2 p-2 active:scale-90 bg-orange-400"
             onClick={handleLogout}
           >
-            LOGOUT?
+            LogOut
           </button>
         </div>
       </nav>
@@ -155,14 +160,14 @@ export default function Chat() {
             (toggleSessions ? "hidden" : "")
           }
         >
-          <ul className="flex flex-col-reverse overflow-y-scroll">
+          <ul className="flex flex-col-reverse overflow-y-auto">
             {sessions.map((session) => (
               <li
                 key={session.id}
                 id={session.id}
                 className={
                   "p-3 outline outline-1 flex-shrink-0 flex-grow-0 text-center content-center cursor-pointer " +
-                  (activeSession == session.id ? "text-green-400 bg-black" : "")
+                  (activeSession == session.id ? "text-green-400 bg-black sticky justify-self-end" : "")
                 }
                 onClick={openChatSession}
               >
@@ -170,6 +175,8 @@ export default function Chat() {
                 {/* {session.updatedAt} */}
               </li>
             ))}
+            <span></span>
+            <span></span>
           </ul>
           <span
             className={
@@ -179,9 +186,15 @@ export default function Chat() {
           >
             New Session?
           </span>
+          {!toggleSessions ? <span className="text-center sm:hidden">HIDE SESSIONS to chat</span> : null}
         </div>
         {/* Chatbox */}
-        <div className="basis-full outline outline-1 outline-gray-500">
+        <div
+          className={
+            "basis-full outline outline-1 outline-gray-500 sm:block " +
+            (toggleSessions ? "block" : "hidden")
+          }
+        >
           <Chatbox chatLog={chatLog} sessionId={activeSession} />
         </div>
       </div>

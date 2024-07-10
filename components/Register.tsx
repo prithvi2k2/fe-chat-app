@@ -87,7 +87,7 @@ export default function Register() {
           className="text-white rounded-full bg-green-500 p-3"
         />
       </form>
-      {statusMsg != null ? <span>{statusMsg}</span> : null}
+      {statusMsg != null ? <span className="flex justify-center">{statusMsg}</span> : null}
     </div>
   );
 }
