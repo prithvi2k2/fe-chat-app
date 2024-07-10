@@ -119,7 +119,7 @@ export default function Chat() {
   };
 
   return (
-    <div className="flex flex-col w-screen h-screen max-h-screen">
+    <div className="flex flex-col w-screen h-dvh max-h-dvh">
       <nav className="h-8 flex flex-shrink-0 justify-between basis-16 bg-gray-200">
         <button
           className="font-mono rounded-full outline-2 m-2 p-2 active:scale-90 bg-blue-500"
@@ -128,13 +128,13 @@ export default function Chat() {
           {toggleSessions ? ">>" : "<<"} Sessions
         </button>
         {isConnected ? (
-          <button
+          <button title="Live WebSocket Connection"
             className="m-2 p-2 rounded-full bg-green-500 font-mono cursor-default"
           >
             online
           </button>
         ) : (
-          <button className="m-2 p-2 rounded-full bg-red-500 font-mono">
+          <button title="No WebSocket Connection" className="m-2 p-2 rounded-full bg-red-500 font-mono">
             offline
           </button>
         )}
@@ -155,7 +155,7 @@ export default function Chat() {
             (toggleSessions ? "hidden" : "")
           }
         >
-          <ul className="flex flex-col-reverse h-auto overflow-y-scroll">
+          <ul className="flex flex-col-reverse overflow-y-scroll">
             {sessions.map((session) => (
               <li
                 key={session.id}
@@ -181,7 +181,7 @@ export default function Chat() {
           </span>
         </div>
         {/* Chatbox */}
-        <div className="basis-full outline outline-1 outline-gray-500 max-h-full">
+        <div className="basis-full outline outline-1 outline-gray-500">
           <Chatbox chatLog={chatLog} sessionId={activeSession} />
         </div>
       </div>
